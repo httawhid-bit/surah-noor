@@ -25,6 +25,8 @@
   --ayat-bg: #fff3d4;
   --ayat-border: #d6bb74;
   --quran-green: #3e7d58;
+  --header-border-width: 2px;
+  --header-height-fallback: 112px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -33,17 +35,25 @@ body {
   color: var(--text);
   min-height: 100vh;
   direction: rtl;
+  padding-top: var(--header-height, var(--header-height-fallback));
 }
 /* ── Header ── */
 .header {
   background: linear-gradient(135deg, #a3812a 0%, #cfa948 50%, #8e6e20 100%);
-  border-bottom: 2px solid var(--gold);
+  border-bottom: var(--header-border-width) solid var(--gold);
   padding: 28px 20px 20px;
   text-align: center;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+  transition: transform 0.28s ease;
+  will-change: transform;
+}
+.header--hidden {
+  transform: translateY(calc(-100% - var(--header-border-width)));
 }
 .header-title {
   font-size: 2.2rem;
@@ -999,6 +1009,40 @@ function filterCards(){
   );
   render(filtered);
 }
+
+const headerEl = document.querySelector('.header');
+const SCROLL_THRESHOLD_PX = 2;
+let lastScrollY = 0;
+let isScrollTicking = false;
+
+function syncHeaderHeight(){
+  if(headerEl){
+    document.documentElement.style.setProperty('--header-height', `${headerEl.offsetHeight}px`);
+  }
+}
+
+function handleHeaderOnScroll(){
+  if(!headerEl) return;
+  const currentScrollY = window.scrollY;
+  if(currentScrollY <= 0){
+    headerEl.classList.remove('header--hidden');
+  } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX){
+    headerEl.classList.add('header--hidden');
+  } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD_PX){
+    headerEl.classList.remove('header--hidden');
+  }
+  lastScrollY = currentScrollY;
+  isScrollTicking = false;
+}
+
+window.addEventListener('scroll', () => {
+  if(!isScrollTicking){
+    window.requestAnimationFrame(handleHeaderOnScroll);
+    isScrollTicking = true;
+  }
+}, { passive: true });
+window.addEventListener('resize', syncHeaderHeight);
+window.requestAnimationFrame(syncHeaderHeight);
 
 buildTOC();
 render(ayats);
