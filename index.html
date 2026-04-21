@@ -49,11 +49,22 @@ body {
   right: 0;
   z-index: 100;
   box-shadow: 0 4px 30px rgba(0,0,0,0.8);
-  transition: transform 0.28s ease;
-  will-change: transform;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  will-change: max-height;
+  max-height: 150px;
 }
 .header--hidden {
-  transform: translateY(calc(-100% - var(--header-border-width)));
+  max-height: 32px;
+  padding: 6px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.header--hidden .header-title,
+.header--hidden .legend {
+  display: none;
+}
+.header--hidden .header-sub {
+  font-size: 0.75rem;
+  margin-top: 0;
 }
 .header-title {
   font-size: 2.2rem;
@@ -1047,7 +1058,7 @@ function filterCards(){
 }
 
 const headerEl = document.querySelector('.header');
-const SCROLL_THRESHOLD_PX = 2;
+const SCROLL_THRESHOLD_PX = 40;
 let lastScrollY = 0;
 let isScrollTicking = false;
 
@@ -1063,7 +1074,7 @@ function handleHeaderOnScroll(){
   if(currentScrollY <= 0){
     headerEl.classList.remove('header--hidden');
   } 
-  else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX){
+  else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX && currentScrollY > 80){
     headerEl.classList.add('header--hidden');
   } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD_PX){
     headerEl.classList.remove('header--hidden');
