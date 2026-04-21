@@ -1026,8 +1026,9 @@ function handleHeaderOnScroll(){
   const currentScrollY = window.scrollY;
   if(currentScrollY <= 0){
     headerEl.classList.remove('header--hidden');
-  } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX){
-    headerEl.classList.add('header--hidden');
+  // } 
+  // else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX){
+  //   headerEl.classList.add('header--hidden');
   } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD_PX){
     headerEl.classList.remove('header--hidden');
   }
