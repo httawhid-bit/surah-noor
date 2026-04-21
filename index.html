@@ -25,6 +25,8 @@
   --ayat-bg: #fff3d4;
   --ayat-border: #d6bb74;
   --quran-green: #3e7d58;
+  --header-border-width: 2px;
+  --header-height-fallback: 112px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -33,12 +35,12 @@ body {
   color: var(--text);
   min-height: 100vh;
   direction: rtl;
-  padding-top: var(--header-height, 112px);
+  padding-top: var(--header-height, var(--header-height-fallback));
 }
 /* ── Header ── */
 .header {
   background: linear-gradient(135deg, #a3812a 0%, #cfa948 50%, #8e6e20 100%);
-  border-bottom: 2px solid var(--gold);
+  border-bottom: var(--header-border-width) solid var(--gold);
   padding: 28px 20px 20px;
   text-align: center;
   position: fixed;
@@ -51,7 +53,7 @@ body {
   will-change: transform;
 }
 .header--hidden {
-  transform: translateY(calc(-100% - 2px));
+  transform: translateY(calc(-100% - var(--header-border-width)));
 }
 .header-title {
   font-size: 2.2rem;
@@ -1021,7 +1023,7 @@ function syncHeaderHeight(){
 
 function handleHeaderOnScroll(){
   if(!headerEl) return;
-  const currentScrollY = window.scrollY || window.pageYOffset;
+  const currentScrollY = window.scrollY;
   if(currentScrollY <= 0){
     headerEl.classList.remove('header--hidden');
   } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD){
