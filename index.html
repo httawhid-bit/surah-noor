@@ -33,6 +33,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   direction: rtl;
+  padding-top: var(--header-height, 0px);
 }
 /* ── Header ── */
 .header {
@@ -40,10 +41,17 @@ body {
   border-bottom: 2px solid var(--gold);
   padding: 28px 20px 20px;
   text-align: center;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+  transition: transform 0.28s ease;
+  will-change: transform;
+}
+.header--hidden {
+  transform: translateY(calc(-100% - 2px));
 }
 .header-title {
   font-size: 2.2rem;
@@ -999,6 +1007,39 @@ function filterCards(){
   );
   render(filtered);
 }
+
+const headerEl = document.querySelector('.header');
+let lastScrollY = 0;
+let isScrollTicking = false;
+
+function syncHeaderHeight(){
+  if(headerEl){
+    document.documentElement.style.setProperty('--header-height', `${headerEl.offsetHeight}px`);
+  }
+}
+
+function handleHeaderOnScroll(){
+  if(!headerEl) return;
+  const currentScrollY = window.scrollY || window.pageYOffset;
+  if(currentScrollY <= 0){
+    headerEl.classList.remove('header--hidden');
+  } else if(currentScrollY > lastScrollY + 2){
+    headerEl.classList.add('header--hidden');
+  } else if(currentScrollY < lastScrollY - 2){
+    headerEl.classList.remove('header--hidden');
+  }
+  lastScrollY = currentScrollY;
+  isScrollTicking = false;
+}
+
+window.addEventListener('scroll', () => {
+  if(!isScrollTicking){
+    window.requestAnimationFrame(handleHeaderOnScroll);
+    isScrollTicking = true;
+  }
+}, { passive: true });
+window.addEventListener('resize', syncHeaderHeight);
+syncHeaderHeight();
 
 buildTOC();
 render(ayats);
