@@ -1011,7 +1011,7 @@ function filterCards(){
 }
 
 const headerEl = document.querySelector('.header');
-const SCROLL_THRESHOLD = 2;
+const SCROLL_THRESHOLD_PX = 2;
 let lastScrollY = 0;
 let isScrollTicking = false;
 
@@ -1026,9 +1026,9 @@ function handleHeaderOnScroll(){
   const currentScrollY = window.scrollY;
   if(currentScrollY <= 0){
     headerEl.classList.remove('header--hidden');
-  } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD){
+  } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX){
     headerEl.classList.add('header--hidden');
-  } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD){
+  } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD_PX){
     headerEl.classList.remove('header--hidden');
   }
   lastScrollY = currentScrollY;
@@ -1042,7 +1042,7 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 window.addEventListener('resize', syncHeaderHeight);
-syncHeaderHeight();
+window.requestAnimationFrame(syncHeaderHeight);
 
 buildTOC();
 render(ayats);
