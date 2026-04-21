@@ -138,6 +138,10 @@ body {
   transition: box-shadow 0.2s;
 }
 .ayat-card:hover { box-shadow: 0 0 20px rgba(200,169,78,0.15); }
+.ayat-card.ayat-important {
+  background: #fffbe8;
+  border-color: #e8d391;
+}
 .ayat-header {
   background: linear-gradient(90deg, var(--quran-green) 0%, #5f9b76 100%);
   padding: 10px 18px;
@@ -1036,8 +1040,9 @@ function buildTable(words, cls, badgeText, rowCls){
 
 function buildCard(a){
   const noWords = a.isms.length===0 && a.fils.length===0;
+  const cardClass = isImportantAyat(a.num) ? 'ayat-card ayat-important' : 'ayat-card';
   return `
-  <div class="ayat-card" id="ayat-${a.num}">
+  <div class="${cardClass}" id="ayat-${a.num}">
     <div class="ayat-header">
       <div class="ayat-num">${a.num}</div>
       <div class="ayat-label">الآية ${a.num} — সূরা নূর</div>
@@ -1054,6 +1059,13 @@ function buildCard(a){
       ${noWords?'<div style="color:var(--text-muted);font-size:0.9rem;padding:8px 0">—</div>':''}
     </div>
   </div>`;
+}
+
+function isImportantAyat(num){
+  return (num >= 1 && num <= 10) ||
+         (num >= 21 && num <= 25) ||
+         (num >= 27 && num <= 30) ||
+         (num >= 32 && num <= 36);
 }
 
 function render(list){
