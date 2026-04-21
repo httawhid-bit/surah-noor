@@ -33,7 +33,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   direction: rtl;
-  padding-top: var(--header-height, 0px);
+  padding-top: var(--header-height, 112px);
 }
 /* ── Header ── */
 .header {
@@ -1009,6 +1009,7 @@ function filterCards(){
 }
 
 const headerEl = document.querySelector('.header');
+const SCROLL_THRESHOLD = 2;
 let lastScrollY = 0;
 let isScrollTicking = false;
 
@@ -1023,9 +1024,9 @@ function handleHeaderOnScroll(){
   const currentScrollY = window.scrollY || window.pageYOffset;
   if(currentScrollY <= 0){
     headerEl.classList.remove('header--hidden');
-  } else if(currentScrollY > lastScrollY + 2){
+  } else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD){
     headerEl.classList.add('header--hidden');
-  } else if(currentScrollY < lastScrollY - 2){
+  } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD){
     headerEl.classList.remove('header--hidden');
   }
   lastScrollY = currentScrollY;
