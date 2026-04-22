@@ -1086,6 +1086,7 @@ function filterCards(){
 
 const headerEl = document.querySelector('.header');
 const HEADER_TOP_THRESHOLD_PX = 6;
+let isHeaderSyncQueued = false;
 
 function syncHeaderState(){
   if(!headerEl) return;
@@ -1094,8 +1095,17 @@ function syncHeaderState(){
   document.documentElement.style.setProperty('--header-height', `${headerEl.offsetHeight}px`);
 }
 
+function queueHeaderSync(){
+  if(isHeaderSyncQueued) return;
+  isHeaderSyncQueued = true;
+  window.requestAnimationFrame(() => {
+    isHeaderSyncQueued = false;
+    syncHeaderState();
+  });
+}
+
 window.addEventListener('load', syncHeaderState);
-window.addEventListener('scroll', syncHeaderState, { passive: true });
+window.addEventListener('scroll', queueHeaderSync, { passive: true });
 window.addEventListener('resize', syncHeaderState);
 
 buildTOC();
