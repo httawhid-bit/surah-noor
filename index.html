@@ -1085,39 +1085,28 @@ function filterCards(){
 }
 
 const headerEl = document.querySelector('.header');
-const SCROLL_THRESHOLD_PX = 40;
-let lastScrollY = 0;
-let isScrollTicking = false;
+const HEADER_TOP_THRESHOLD_PX = 6;
+let isHeaderSyncQueued = false;
 
-function syncHeaderHeight(){
-  if(headerEl){
-    document.documentElement.style.setProperty('--header-height', `${headerEl.offsetHeight}px`);
-  }
-}
-
-function handleHeaderOnScroll(){
+function syncHeaderState(){
   if(!headerEl) return;
-  const currentScrollY = window.scrollY;
-  if(currentScrollY <= 0){
-    headerEl.classList.remove('header--hidden');
-  } 
-  else if(currentScrollY > lastScrollY + SCROLL_THRESHOLD_PX && currentScrollY > 80){
-    headerEl.classList.add('header--hidden');
-  } else if(currentScrollY < lastScrollY - SCROLL_THRESHOLD_PX){
-    headerEl.classList.remove('header--hidden');
-  }
-  lastScrollY = currentScrollY;
-  isScrollTicking = false;
+  const atTop = window.scrollY <= HEADER_TOP_THRESHOLD_PX;
+  headerEl.classList.toggle('header--hidden', !atTop);
+  document.documentElement.style.setProperty('--header-height', `${headerEl.offsetHeight}px`);
 }
 
-window.addEventListener('scroll', () => {
-  if(!isScrollTicking){
-    window.requestAnimationFrame(handleHeaderOnScroll);
-    isScrollTicking = true;
-  }
-}, { passive: true });
-window.addEventListener('resize', syncHeaderHeight);
-window.requestAnimationFrame(syncHeaderHeight);
+function queueHeaderSync(){
+  if(isHeaderSyncQueued) return;
+  isHeaderSyncQueued = true;
+  window.requestAnimationFrame(() => {
+    isHeaderSyncQueued = false;
+    syncHeaderState();
+  });
+}
+
+window.addEventListener('load', syncHeaderState);
+window.addEventListener('scroll', queueHeaderSync, { passive: true });
+window.addEventListener('resize', syncHeaderState);
 
 buildTOC();
 render(ayats);
